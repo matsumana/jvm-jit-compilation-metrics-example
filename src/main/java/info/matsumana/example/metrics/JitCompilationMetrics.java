@@ -43,29 +43,27 @@ public class JitCompilationMetrics {
         recording.start();
 
         final Consumer<RecordedEvent> consumer = event -> {
-            if (recording.getState() != RecordingState.CLOSED) {
-                synchronized (recording) {
-                    if (recording.getState() != RecordingState.CLOSED) {
-                        final boolean succeded = event.getBoolean("succeded");
-                        final RecordedMethod method = event.getValue("method");
-                        final String methodName = method.getType().getName();
+            synchronized (recording) {
+                if (recording.getState() != RecordingState.CLOSED) {
+                    final boolean succeded = event.getBoolean("succeded");
+                    final RecordedMethod method = event.getValue("method");
+                    final String methodName = method.getType().getName();
 
-                        // Note:
-                        // Use the first three tokens as package label.
-                        // Otherwise, too many metrics will be created then
-                        // a monitoring system might affected heavy load.
-                        final String pkg = Stream.of(packageNameDelimiter.split(methodName))
-                                                 .filter(token -> !classNamePrefix.matcher(token).find())
-                                                 .limit(3)
-                                                 .collect(joining("."));
+                    // Note:
+                    // Use the first three tokens as package label.
+                    // Otherwise, too many metrics will be created then
+                    // a monitoring system might affected heavy load.
+                    final String pkg = Stream.of(packageNameDelimiter.split(methodName))
+                                             .filter(token -> !classNamePrefix.matcher(token).find())
+                                             .limit(3)
+                                             .collect(joining("."));
 
-                        final List<Tag> tags = List.of(Tag.of("package", pkg),
-                                                       Tag.of("succeded", String.valueOf(succeded)));
-                        final Counter counter = Counter.builder("jvm.jit.compilation")
-                                                       .tags(tags)
-                                                       .register(registry);
-                        counter.increment();
-                    }
+                    final List<Tag> tags = List.of(Tag.of("package", pkg),
+                                                   Tag.of("succeded", String.valueOf(succeded)));
+                    final Counter counter = Counter.builder("jvm.jit.compilation")
+                                                   .tags(tags)
+                                                   .register(registry);
+                    counter.increment();
                 }
             }
         };
