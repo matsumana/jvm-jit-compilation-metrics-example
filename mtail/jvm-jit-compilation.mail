@@ -1,0 +1,12 @@
+counter mtail_jvm_jit_compilation_total by filename, package
+
+/^/ +
+/\[\S*?\]\[\S*?\]\[\S*?\] / +
+/(?P<compile_id>\d+?) / +
+/(?P<compile_type>.)(?P<sync_char>.)(?P<exception_char>.)(?P<blocking_char>.)(?P<native_char>.) / +
+/(?P<comp_level>.) / +
+/      / +
+/(?P<package>[a-z]+?\.??[a-z]+?\.??[a-z]+?)\.[A-Z]/ +
+/.*/ {
+  mtail_jvm_jit_compilation_total[getfilename()][$package]++
+}

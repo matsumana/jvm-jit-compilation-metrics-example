@@ -1,0 +1,65 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  labels:
+    app: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+      annotations:
+        # for jvm-jit-compilation-metrics-example-app
+        prometheus.io/scrape_0: "true"
+        prometheus.io/port_0: "8081"
+        prometheus.io/path_0: /actuator/prometheus
+        # for jvm-jit-compilation-metrics-example-mtail
+        prometheus.io/scrape_1: "true"
+        prometheus.io/port_1: "3903"
+        prometheus.io/path_1: /metrics
+    spec:
+      volumes:
+        - name: jvm-unified-log
+          emptyDir: {}
+      containers:
+        - name: jvm-jit-compilation-metrics-example-app
+          image: localhost:5000/jvm-jit-compilation-metrics-example-app:latest
+          volumeMounts:
+            - name: jvm-unified-log
+              mountPath: /app/jvm-unified-log
+          ports:
+            - containerPort: 8080
+          command:
+            - java
+          args:
+            - -Xlog:jit+compilation=debug:/app/jvm-unified-log/jit-compilation.log
+            - -jar
+            - /app/app.jar
+        - name: jvm-jit-compilation-metrics-example-mtail
+          image: localhost:5000/jvm-jit-compilation-metrics-example-mtail:latest
+          volumeMounts:
+            - name: jvm-unified-log
+              mountPath: /app/jvm-unified-log
+          ports:
+            - containerPort: 3903
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app
+spec:
+  type: NodePort
+  selector:
+    app: app
+  ports:
+    - protocol: TCP
+      targetPort: 8080
+      port: 8080
+      nodePort: 30001
