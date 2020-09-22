@@ -1,8 +1,8 @@
 counter mtail_jvm_jit_compilation_total by filename, package
 
 /^/ +
-/\[\S*?\]\[\S*?\]\[\S*?\] / +
-/(?P<compile_id>\d+?) / +
+/\[\S+?\]\[\S+?\]\[\S+?\] / +
+/(?P<compile_id>\S+?) / +
 /(?P<compile_type>.)(?P<sync_char>.)(?P<exception_char>.)(?P<blocking_char>.)(?P<native_char>.) / +
 /(?P<comp_level>.) / +
 /      / +

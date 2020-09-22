@@ -9,4 +9,4 @@ if [ ! -e $LOG_FILE ]; then
 fi
 
 # Need to use `exec`. otherwise shutdown signal can't reach to mtail
-exec /app/mtail --progs=/app/jvm-jit-compilation.mail --logs=$LOG_FILE --logtostderr
+exec /mtail/bin/mtail --progs=/mtail/conf/jvm-jit-compilation.mtail --logs=$LOG_FILE --logtostderr

@@ -11,11 +11,13 @@ RUN apt-get update && \
 FROM ubuntu:bionic-20200903
 
 RUN useradd app
-RUN mkdir /app
-RUN chown -R app:app /app
+RUN mkdir -p /mtail/bin
+RUN mkdir -p /mtail/conf
+RUN chown -R app:app /mtail
 USER app
-COPY --from=builder --chown=app:app /tmp/mtail /app/mtail
-COPY --chown=app:app ./docker-entrypoint.sh /app/docker-entrypoint.sh
-COPY --chown=app:app ./jvm-jit-compilation.mail /app/jvm-jit-compilation.mail
 
-CMD ["/app/docker-entrypoint.sh"]
+COPY --from=builder --chown=app:app /tmp/mtail /mtail/bin/mtail
+COPY --chown=app:app jvm-jit-compilation.mtail /mtail/conf/jvm-jit-compilation.mtail
+COPY --chown=app:app ./docker-entrypoint.sh /mtail/docker-entrypoint.sh
+
+CMD ["/mtail/docker-entrypoint.sh"]
