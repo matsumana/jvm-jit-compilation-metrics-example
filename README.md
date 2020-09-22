@@ -6,24 +6,39 @@ Since this app uses `JEP 349: JFR Event Streaming`, need to use Java 14 or later
 
 JEP 349: https://openjdk.java.net/jeps/349
 
-## How to build
+## Preparation
+
+### Launch local Docker registry
 
 ```
-$ ./gradlew --no-daemon clean build
+$ docker run -d -p 5000:5000 --name registry registry:2.6
 ```
 
-## How to run the app
+## How to build and push to the local Docker registry
 
 ```
-$ java -jar build/libs/jvm-jit-compilation-metrics-example-*.jar
+$ make docker-push-app
+$ make docker-push-mtail
+```
+
+## How to deploy to a local k8s cluster
+
+```
+$ make kubectl-create-example
+```
+
+## How to delete the app from a local k8s cluster
+
+```
+$ make kubectl-delete-example
 ```
 
 ## How to load for JIT compilation
 
-e.g. Apache Bench
+*This command uses Apache Bench
 
 ```
-$ ab -n 10000 -c 20 http://localhost:8080/
+$ make load-test
 ```
 
 <br>
@@ -32,7 +47,7 @@ $ ab -n 10000 -c 20 http://localhost:8080/
 
 ## Exported JIT compilation metrics
 
-e.g.
+### By Micrometer
 
 ```
 # HELP jvm_jit_compilation_total  
@@ -41,23 +56,21 @@ jvm_jit_compilation_total{package="java.util",succeded="true",} 333.0
 jvm_jit_compilation_total{package="org.springframework.context",succeded="true",} 29.0
 ...
 ```
+![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example3.png)
 
-<br>
-
----
-
-## How to see this app's metrics with Prometheus
-
-Here is [example-prometheus.yml](prometheus/example-prometheus.yml)
+### By mtail
 
 ```
-$ cd /path/to/prometheus-directory
-$ ./prometheus --config.file=/path/to/example-prometheus.yml
+# HELP mtail_jvm_jit_compilation_total defined at jvm-jit-compilation.mtail:1:9-39
+# TYPE mtail_jvm_jit_compilation_total counter
+mtail_jvm_jit_compilation_total{filename="/app/jvm-unified-log/jit-compilation.log",package="java.util",prog="jvm-jit-compilation.mtail"} 1921
+mtail_jvm_jit_compilation_total{filename="/app/jvm-unified-log/jit-compilation.log",package="java.util.concurrent",prog="jvm-jit-compilation.mtail"} 369
+mtail_jvm_jit_compilation_total{filename="/app/jvm-unified-log/jit-compilation.log",package="org.springframework.util",prog="jvm-jit-compilation.mtail"} 554
+...
 ```
 
-Example PromQL:
+![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example4.png)
 
-http://localhost:9090/graph?g0.range_input=5m&g0.expr=jvm_jit_compilation_total&g0.tab=0&g1.range_input=5m&g1.expr=sum(jvm_jit_compilation_total)%20by%20(instance)&g1.tab=0
+### Example PromQL
 
-![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example1.png)
-![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example2.png)
+http://localhost:30000/graph?g0.range_input=5m&g0.expr=jvm_jit_compilation_total&g0.tab=0&g1.range_input=5m&g1.expr=mtail_jvm_jit_compilation_total&g1.tab=0&g2.range_input=5m&g2.expr=mtail_log_lines_total&g2.tab=0
