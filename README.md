@@ -49,6 +49,8 @@ $ make load-test
 
 ### By Micrometer
 
+setting: [JitCompilationMetrics.java](src/main/java/info/matsumana/example/metrics/JitCompilationMetrics.java)
+
 ```
 # HELP jvm_jit_compilation_total  
 # TYPE jvm_jit_compilation_total counter
@@ -59,6 +61,8 @@ jvm_jit_compilation_total{package="org.springframework.context",succeded="true",
 ![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example3.png)
 
 ### By mtail
+
+setting: [jvm-jit-compilation.mtail](mtail/jvm-jit-compilation.mtail)
 
 ```
 # HELP mtail_jvm_jit_compilation_total defined at jvm-jit-compilation.mtail:1:9-39
