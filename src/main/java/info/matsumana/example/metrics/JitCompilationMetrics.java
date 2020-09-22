@@ -1,3 +1,7 @@
+/*
+ * This source code is written with the following blog as reference.
+ * https://b.chiroito.dev/entry/2020/09/19/225533
+ */
 package info.matsumana.example.metrics;
 
 import static java.util.stream.Collectors.joining;
@@ -45,7 +49,6 @@ public class JitCompilationMetrics {
         final Consumer<RecordedEvent> consumer = event -> {
             synchronized (recording) {
                 if (recording.getState() != RecordingState.CLOSED) {
-                    final boolean succeded = event.getBoolean("succeded");
                     final RecordedMethod method = event.getValue("method");
                     final String methodName = method.getType().getName();
 
@@ -58,8 +61,7 @@ public class JitCompilationMetrics {
                                              .limit(3)
                                              .collect(joining("."));
 
-                    final List<Tag> tags = List.of(Tag.of("package", pkg),
-                                                   Tag.of("succeded", String.valueOf(succeded)));
+                    final List<Tag> tags = List.of(Tag.of("package", pkg));
                     final Counter counter = Counter.builder("jvm.jit.compilation")
                                                    .tags(tags)
                                                    .register(registry);
