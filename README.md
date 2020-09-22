@@ -54,8 +54,8 @@ setting: [JitCompilationMetrics.java](src/main/java/info/matsumana/example/metri
 ```
 # HELP jvm_jit_compilation_total  
 # TYPE jvm_jit_compilation_total counter
-jvm_jit_compilation_total{package="java.util",succeded="true",} 333.0
-jvm_jit_compilation_total{package="org.springframework.context",succeded="true",} 29.0
+jvm_jit_compilation_total{package="java.util",} 333.0
+jvm_jit_compilation_total{package="org.springframework.context",} 29.0
 ...
 ```
 ![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example3_2.png)
