@@ -58,7 +58,7 @@ jvm_jit_compilation_total{package="java.util",succeded="true",} 333.0
 jvm_jit_compilation_total{package="org.springframework.context",succeded="true",} 29.0
 ...
 ```
-![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example3.png)
+![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example3_2.png)
 
 ### By mtail
 
@@ -73,7 +73,7 @@ mtail_jvm_jit_compilation_total{filename="/app/jvm-unified-log/jit-compilation.l
 ...
 ```
 
-![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example4.png)
+![](http://static.matsumana.info/blog/jvm-jit-compilation-metrics-example4_2.png)
 
 ### Example PromQL
 
